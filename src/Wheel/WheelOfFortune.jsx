@@ -92,7 +92,7 @@ export default function WheelOfFortune({ Open, setOpen, Data, setData }) {
             </h2>
             <Container className="win-combo">
               <h4 className="win-text">You Won :</h4>
-              <h1 className="purple win-amount">{data[prizeNumber].option}</h1>
+              <h1 className="purple win-amount">{!mustSpin ? data[prizeNumber].option : <p> </p>}</h1>
             </Container>
             <p className="win-msg">
               In accordance with your coefficient, E-Gifts will be sent to your
